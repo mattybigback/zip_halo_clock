@@ -73,9 +73,6 @@ def set_time_mode():
             if press_count == 4:
                 return
 
-
-
-
 def main():
     display.clear()
     DISPLAY_CLOCK = True
@@ -93,4 +90,3 @@ def main():
 
 setup()
 main()
-
