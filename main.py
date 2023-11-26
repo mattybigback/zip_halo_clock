@@ -16,7 +16,7 @@ ring = NeoPixel(pin8, num_pixels)
 rtc = kitronic.KitronikRTC()
 
 def setup():
-    rtc.setTime(17,40,15)
+    rtc.setTime(0,0,0)
     pin14.set_analog_period_microseconds(10000)
 
 
@@ -59,6 +59,8 @@ def check_time():
 def set_time_mode():
     sleep(300)
     SET_TIME_MODE = True
+    clear_ring()
+    ring.show()
     press_count = 0
     while SET_TIME_MODE is True:
         if button_a.is_pressed():
@@ -71,6 +73,8 @@ def set_time_mode():
             if press_count == 3:
                 display.scroll("S")
             if press_count == 4:
+                display.scroll("T")
+            if press_count == 5:
                 return
 
 def main():
