@@ -1,4 +1,4 @@
-from microbit import *
+from microbit import pin8, pin14, sleep, button_a, button_b, display
 from neopixel import NeoPixel
 import kitronic
 from math import floor
@@ -21,13 +21,12 @@ def setup():
 
 
 def markers():
-    markers = (0,5,10,15,20,25,30,35,40,45,50,55)
-    for i in markers:
+    MARKERS = (0,5,10,15,20,25,30,35,40,45,50,55)
+    for i in MARKERS:
         ring[i] = marker_colour
 
 def clear_ring():
-    for i in range(num_pixels):
-        ring[i]=[0x00,0x00,0x00]
+    ring.clear()
     
 def tick(time):
     if AUDIBLE_TICK is True:
@@ -57,12 +56,40 @@ def check_time():
     rtc.readValue()
     return (rtc.currentHours, rtc.currentMinutes, rtc.currentSeconds)
 
+def set_time_mode():
+    sleep(300)
+    SET_TIME_MODE = True
+    press_count = 0
+    while SET_TIME_MODE is True:
+        if button_a.is_pressed():
+            print(press_count)
+            press_count += 1
+            if press_count == 1:
+                display.scroll("H")
+            if press_count == 2:
+                display.scroll("M")
+            if press_count == 3:
+                display.scroll("S")
+            if press_count == 4:
+                return
+
+
+
+
 def main():
+    display.clear()
+    DISPLAY_CLOCK = True
+    ticks = 0
     time_now = check_time()
-    while True:
+    while DISPLAY_CLOCK is True:
         if time_now != check_time():
             time_now = check_time()
             tick(time_now)
+            if button_a.is_pressed() and button_b.is_pressed():
+                ticks += 1
+            if ticks >= 2:
+                set_time_mode()
+                ticks = 0
 
 setup()
 main()
