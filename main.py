@@ -1,18 +1,19 @@
 from microbit import pin8, pin14, sleep, button_a, button_b, display
 from neopixel import NeoPixel
-import kitronic_min as kt
 from math import floor
+import kitronic_min as kt
 
-AUDIBLE_TICK = True
 
-num_pixels = 60
-marker_colour = [0x0F, 0x00, 0x00]  # Hex color - red, green and blue
-seconds_colour = [0x0F, 0x0F, 0x0F]
-hours_am_colour = [0x00, 0x07, 0x0f]
-hours_pm_colour = [0x00, 0x00, 0x17]
-minutes_colour = [0x00, 0x0F, 0x00]
+TICK_SND = True
 
-ring = NeoPixel(pin8, num_pixels)
+NUM_PIXELS = 60
+mark_col = [0x0F, 0, 0]
+sec_col = [0x0F, 0x0F, 0x0F]
+hr_am_col = [0, 0x07, 0x0f]
+hr_pm_col = [0, 0, 0x17]
+min_col = [0, 0x0F, 0]
+
+ring = NeoPixel(pin8, NUM_PIXELS)
 rtc = kt.KitronikRTC()
 
 def setup():
@@ -21,81 +22,111 @@ def setup():
 
 
 def markers():
-    MARKERS = (0,5,10,15,20,25,30,35,40,45,50,55)
-    for i in MARKERS:
-        ring[i] = marker_colour
-
-def clear_ring():
-    ring.clear()
+    MARKS = (0,5,10,15,20,25,30,35,40,45,50,55)
+    for i in MARKS:
+        ring[i] = mark_col
     
 def tick(time):
-    if AUDIBLE_TICK is True:
+    if TICK_SND is True:
         pin14.write_analog(256)
     seconds_led = time[2]
     minutes_led = time[1]
     hours_led, pm = calc_hour_led(time[0], time[1])
-    clear_ring()
+    ring.clear()
     markers()
     if pm == 1:
-        ring[hours_led]=hours_pm_colour
+        ring[hours_led]=hr_pm_col
     else:
-        ring[hours_led]=hours_am_colour
-    ring[minutes_led]=minutes_colour
-    ring[seconds_led]=seconds_colour
+        ring[hours_led]=hr_am_col
+    ring[minutes_led]=min_col
+    ring[seconds_led]=sec_col
     ring.show()
-    if AUDIBLE_TICK is True:
+    if TICK_SND is True:
         sleep(20)
         pin14.write_analog(0)
 
 def calc_hour_led(hour, minute):
-    if hour >= 12:
+    if hour > 13:
         return ((hour-12)*5+floor(minute/12),1)
     return (hour*5+floor(minute/12),0)
 
+def show_just_seconds(sec):
+    ring.clear()
+    markers()
+    ring[sec] = sec_col
+    ring.show()
+
+def show_just_mins(min):
+    ring.clear()
+    markers()
+    ring[min] = min_col
+    ring.show()
+
 def check_time():
-    rtc.readValue()
-    return (rtc.currentHours, rtc.currentMinutes, rtc.currentSeconds)
+    rtc.readValue()#
+    return (rtc.cur_hr, rtc.cur_min, rtc.cur_sec)
 
 def toggle_tick(state):
-    global AUDIBLE_TICK
+    global TICK_SND
     if state is True:
-        display.scroll("Off")
+        display.scroll("N")
         state = False
     else:
-        display.scroll("On")
+        display.scroll("Y")
         state = True
-    AUDIBLE_TICK = state
+    TICK_SND = state
 
-def set_time_mode():
+def menu():
+    hr = rtc.cur_hr
+    min = rtc.cur_min
+    sec = rtc.cur_sec
     sleep(300)
-    clear_ring()
-    ring.show()
-    press_count = 1
-    if press_count == 1:
-        display.scroll("H")
-        while press_count == 1:
-            if button_a.is_pressed():
-                press_count += 1
-    if press_count == 2:
-        display.scroll("M")
-        while press_count == 2:
-            if button_a.is_pressed():
-                press_count += 1
-    if press_count == 3:
-        display.scroll("S")
-        while press_count == 3:
-            if button_a.is_pressed():
-                press_count += 1
-    if press_count == 4:
-        display.scroll("T")
-        while press_count == 4:
+    scrolled = False
+    b_cnt = 1
+    while True:
+        if b_cnt == 1:
+            if scrolled is False:
+                display.scroll("H")
+                scrolled = True
+        if b_cnt == 2:
+            if scrolled is False:
+                display.scroll("M")
+                scrolled = True
             if button_b.is_pressed():
-                toggle_tick(AUDIBLE_TICK)
-            if button_a.is_pressed():
-                press_count += 1
+                if min < 59:
+                    min +=1
+                    sleep(250)
+                else:
+                    min = 0
+            show_just_mins(min)
+    
+        if b_cnt == 3:
+            if scrolled is False:
+                display.scroll("S")
+                scrolled = True
+            if button_b.is_pressed():
+                if sec < 59:
+                    sec +=1
+                    sleep(100)
+                else:
+                    sec = 0
+            show_just_seconds(sec)
+                    
+        if b_cnt == 4:
+            if scrolled is False:
+                display.scroll("T")
+                scrolled = True
+            if button_b.is_pressed():
+                toggle_tick(TICK_SND)
+
+        if button_a.is_pressed() and b_cnt < 5:
+            b_cnt += 1
+            scrolled  = False
+
+        if b_cnt >=5:
+            rtc.setTime(hr, min, sec)
+            break
     return
-
-
 
 
 def main():
@@ -110,7 +141,7 @@ def main():
             if button_a.is_pressed() and button_b.is_pressed():
                 ticks += 1
             if ticks >= 2:
-                set_time_mode()
+                menu()
                 ticks = 0
 
 setup()
