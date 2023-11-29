@@ -46,7 +46,7 @@ def tick(time):
         pin14.write_analog(0)
 
 def calc_hour_led(hour, minute):
-    if hour > 13:
+    if hour >= 12:
         return ((hour-12)*5+floor(minute/12),1)
     return (hour*5+floor(minute/12),0)
 
@@ -88,6 +88,22 @@ def menu():
             if scrolled is False:
                 display.scroll("H")
                 scrolled = True
+            if button_b.is_pressed():
+                if hr < 23:
+                    hr+=1
+                else:
+                    hr = 0
+                sleep(500)
+                ring.clear()
+                markers()
+                hr_led, pm = calc_hour_led(hr, 0)
+                if pm == 1:
+                    ring[hr_led] = hr_pm_col
+                else:
+                    ring[hr_led] = hr_am_col
+
+                ring.show()
+
         if b_cnt == 2:
             if scrolled is False:
                 display.scroll("M")
