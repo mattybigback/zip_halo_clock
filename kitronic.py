@@ -105,11 +105,11 @@ class KitronikRTC:
     
     # These read functions only return the last read values.
     # use readValue() to update the stored numbers 
-    def readSec(self):
-       return self.currentSeconds
+    # def readSec(self):
+    #    return self.currentSeconds
 
-    def readMin(self):
-        return self.currentMinutes
+    # def readMin(self):
+    #     return self.currentMinutes
 
-    def readHrs(self):
-        return self.currentHours
+    # def readHrs(self):
+    #     return self.currentHours

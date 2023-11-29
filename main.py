@@ -1,9 +1,9 @@
 from microbit import pin8, pin14, sleep, button_a, button_b, display
 from neopixel import NeoPixel
-import kitronic
+import kitronic_min as kt
 from math import floor
 
-AUDIBLE_TICK = False
+AUDIBLE_TICK = True
 
 num_pixels = 60
 marker_colour = [0x0F, 0x00, 0x00]  # Hex color - red, green and blue
@@ -13,7 +13,7 @@ hours_pm_colour = [0x00, 0x00, 0x17]
 minutes_colour = [0x00, 0x0F, 0x00]
 
 ring = NeoPixel(pin8, num_pixels)
-rtc = kitronic.KitronikRTC()
+rtc = kt.KitronikRTC()
 
 def setup():
     rtc.setTime(0,0,0)
@@ -44,7 +44,7 @@ def tick(time):
     ring[seconds_led]=seconds_colour
     ring.show()
     if AUDIBLE_TICK is True:
-        sleep(5)
+        sleep(20)
         pin14.write_analog(0)
 
 def calc_hour_led(hour, minute):
@@ -56,26 +56,47 @@ def check_time():
     rtc.readValue()
     return (rtc.currentHours, rtc.currentMinutes, rtc.currentSeconds)
 
+def toggle_tick(state):
+    global AUDIBLE_TICK
+    if state is True:
+        display.scroll("Off")
+        state = False
+    else:
+        display.scroll("On")
+        state = True
+    AUDIBLE_TICK = state
+
 def set_time_mode():
     sleep(300)
-    SET_TIME_MODE = True
     clear_ring()
     ring.show()
-    press_count = 0
-    while SET_TIME_MODE is True:
-        if button_a.is_pressed():
-            print(press_count)
-            press_count += 1
-            if press_count == 1:
-                display.scroll("H")
-            if press_count == 2:
-                display.scroll("M")
-            if press_count == 3:
-                display.scroll("S")
-            if press_count == 4:
-                display.scroll("T")
-            if press_count == 5:
-                return
+    press_count = 1
+    if press_count == 1:
+        display.scroll("H")
+        while press_count == 1:
+            if button_a.is_pressed():
+                press_count += 1
+    if press_count == 2:
+        display.scroll("M")
+        while press_count == 2:
+            if button_a.is_pressed():
+                press_count += 1
+    if press_count == 3:
+        display.scroll("S")
+        while press_count == 3:
+            if button_a.is_pressed():
+                press_count += 1
+    if press_count == 4:
+        display.scroll("T")
+        while press_count == 4:
+            if button_b.is_pressed():
+                toggle_tick(AUDIBLE_TICK)
+            if button_a.is_pressed():
+                press_count += 1
+    return
+
+
+
 
 def main():
     display.clear()
