@@ -9,7 +9,7 @@ TICK_SND = True
 NUM_PIXELS = 60
 mark_col = [0x0F, 0, 0]
 sec_col = [0x0F, 0x0F, 0x0F]
-hr_am_col = [0, 0x07, 0x0f]
+hr_am_col = [0, 0x0f, 0x0f]
 hr_pm_col = [0, 0, 0x17]
 min_col = [0, 0x0F, 0]
 
@@ -89,10 +89,7 @@ def menu():
                 display.scroll("H")
                 scrolled = True
             if button_b.is_pressed():
-                if hr < 23:
-                    hr+=1
-                else:
-                    hr = 0
+                hr = (hr + 1) % 24
                 sleep(500)
                 ring.clear()
                 markers()
@@ -108,25 +105,25 @@ def menu():
             if scrolled is False:
                 display.scroll("M")
                 scrolled = True
+                show_just_mins(min)
             if button_b.is_pressed():
-                if min < 59:
-                    min +=1
-                    sleep(250)
-                else:
-                    min = 0
-            show_just_mins(min)
+                min = (min + 1) % 60
+                show_just_mins(min)
+                sleep(250)
+
+            
     
         if b_cnt == 3:
             if scrolled is False:
                 display.scroll("S")
                 scrolled = True
+                show_just_seconds(sec)
             if button_b.is_pressed():
-                if sec < 59:
-                    sec +=1
-                    sleep(100)
-                else:
-                    sec = 0
-            show_just_seconds(sec)
+                sec = (sec + 1) % 60
+                show_just_seconds(sec)
+                sleep(100)
+
+
                     
         if b_cnt == 4:
             if scrolled is False:
