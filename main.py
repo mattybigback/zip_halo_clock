@@ -31,10 +31,10 @@ def tick(time):
         pin14.write_analog(256)
     seconds_led = time[2]
     minutes_led = time[1]
-    hours_led, pm = calc_hour_led(time[0], time[1])
+    hours_led = calc_hour_led(time[0], time[1])
     ring.clear()
     markers()
-    if pm == 1:
+    if time[0] > 12:
         ring[hours_led]=hr_pm_col
     else:
         ring[hours_led]=hr_am_col
@@ -47,7 +47,7 @@ def tick(time):
 
 def calc_hour_led(hour, minute):
     base_hour = (hour % 12) * 5
-    return (base_hour + floor(minute / 12), 1 if hour >= 12 else 0)
+    return (base_hour + floor(minute / 12))
 
 def show_just_seconds(sec):
     ring.clear()
@@ -87,8 +87,8 @@ def menu():
                 sleep(500)
                 ring.clear()
                 markers()
-                hr_led, pm = calc_hour_led(hr, 0)
-                if pm == 1:
+                hr_led = calc_hour_led(hr, 0)
+                if hr > 12:
                     ring[hr_led] = hr_pm_col
                 else:
                     ring[hr_led] = hr_am_col
@@ -117,8 +117,7 @@ def menu():
                 show_just_seconds(sec)
                 sleep(100)
 
-
-                    
+   
         if b_cnt == 4:
             if scrolled is False:
                 display.scroll("T")
