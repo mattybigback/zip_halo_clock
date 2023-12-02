@@ -67,13 +67,8 @@ def check_time():
 
 def toggle_tick(state):
     global TICK_SND
-    if state is True:
-        display.scroll("N")
-        state = False
-    else:
-        display.scroll("Y")
-        state = True
-    TICK_SND = state
+    display.scroll("Off" if state else "On")
+    TICK_SND = not state
 
 def menu():
     hr = rtc.cur_hr
