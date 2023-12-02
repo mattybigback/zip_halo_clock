@@ -1,7 +1,7 @@
 from microbit import pin8, pin14, sleep, button_a, button_b, display
 from neopixel import NeoPixel
 from math import floor
-import kitronic_min as kt
+import MCP7940N as rtc
 
 
 TICK_SND = True
@@ -14,7 +14,7 @@ hr_pm_col = [0, 0, 0x17]
 min_col = [0, 0x0F, 0]
 
 ring = NeoPixel(pin8, NUM_PIXELS)
-rtc = kt.KitronikRTC()
+rtc = rtc.MCP7940N()
 
 def setup():
     rtc.setTime(0,0,0)
