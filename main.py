@@ -46,9 +46,8 @@ def tick(time):
         pin14.write_analog(0)
 
 def calc_hour_led(hour, minute):
-    if hour >= 12:
-        return ((hour-12)*5+floor(minute/12),1)
-    return (hour*5+floor(minute/12),0)
+    base_hour = (hour % 12) * 5
+    return (base_hour + floor(minute / 12), 1 if hour >= 12 else 0)
 
 def show_just_seconds(sec):
     ring.clear()
