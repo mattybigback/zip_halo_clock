@@ -8,8 +8,8 @@ from microbit import (
 from neopixel import NeoPixel
 import MCP7940N as rtc
 
-SND = True  # Sound on or off
-BRT = 2     # Brightmness (0-4)
+SND = False  # Sound on or off
+BRT = 1     # Brightmness (0-4)
 LEDS = 60   # Number of neopixels to control
 
 ring = NeoPixel(neo_pin, LEDS)
@@ -48,7 +48,7 @@ def set_min_sec_led(unit, type="s"):
 
 def set_hour_led(hour, min):
     hour_led = calc_hour_led(hour, min)
-    if hour > 12:
+    if hour > 11:
         hour_col = [0, 0, 15]
     else:
         hour_col = [0, 15, 15]
