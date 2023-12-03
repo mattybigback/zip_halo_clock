@@ -56,7 +56,7 @@ def set_hour_led(hour, min):
     hour_led = calc_hour_led(hour, min)
     if hour > 11:
         hour_col = [0, 0, 15]
-    else:
+    else    :
         hour_col = [0, 15, 15]
     ring[hour_led] = set_bright_offset(hour_col)
 
