@@ -17,7 +17,7 @@ Download the latest hex file from the [releases page](https://github.com/mattybi
 * Minutes - green
 * Hours - cyan (AM) or blue (PM)
 
-The "hands" act like the real hands of an analogue clock. The hour hand moves forward by one place every 12 minutes. When more than one hand is on the same space the lowest value hand takes precedence, so at 13:05:05 LED number 5 will be white, at 13:05:06 it will be green at at 13:06 it will be blue.
+The "hands" act like the real hands of an analogue clock. The hour hand moves forward by one place every 12 minutes. When more than one hand is on the same space the lowest value hand takes precedence, so at 13:05:05 LED number 5 will be white, at 13:05:06 it will be green, and at at 13:06:00 it will be blue.
 
 ### Menu
 
