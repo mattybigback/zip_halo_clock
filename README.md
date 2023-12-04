@@ -1,6 +1,6 @@
 # Zip Halo HD Clock
 
-### RGB digitgal/analogue clock written in Micropython for the BBC Micro:bit
+### RGB digital/analogue clock written in Micropython for the BBC Micro:bit
 
 ![Picture of device working](https://github.com/mattybigback/zip_halo_clock/blob/main/Images/Clock.png?raw=true)
 
